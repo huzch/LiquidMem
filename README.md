@@ -1,8 +1,8 @@
-# ConcurMemPool - 高性能并发内存池
+# LiquidMem - 液态内存
 
 ## 项目简介
 
-ConcurMemPool 是一个高性能的多线程内存池实现，旨在替代标准的 `malloc/free` 接口，提供更高效的内存分配和释放机制。该项目采用三层缓存架构设计，能够显著减少内存分配的锁竞争，提升多线程程序的性能。
+LiquidMem 是一个高性能的多线程内存池实现，旨在替代标准的 `malloc/free` 接口，提供更高效的内存分配和释放机制。该项目采用三层缓存架构设计，能够显著减少内存分配的锁竞争，提升多线程程序的性能。
 
 ## 特性
 
@@ -55,7 +55,7 @@ ConcurMemPool 是一个高性能的多线程内存池实现，旨在替代标准
 ## 项目结构
 
 ```
-ConcurMemPool/
+LiquidMem/
 ├── include/                 # 头文件目录
 │   ├── Common.h            # 公共定义和工具类
 │   ├── ConcurAlloc.h       # 对外接口声明
@@ -90,7 +90,7 @@ ConcurMemPool/
 
 ```bash
 # 克隆项目
-git clone https://github.com/your-username/ConcurMemPool.git
+git clone https://github.com/huzch/LiquidMem.git
 cd ConcurMemPool
 
 # 编译项目

@@ -22,7 +22,8 @@ void CentralCache::InsertRange(void* start, void* end, size_t objSize) {
 }
 
 // 移除批量对应大小的对象到ThreadCache
-size_t CentralCache::RemoveRange(void*& start, void*& end, size_t batchNum, size_t objSize) {
+size_t CentralCache::RemoveRange(void*& start, void*& end, size_t batchNum,
+                                 size_t objSize) {
   assert(objSize <= MAX_BYTES);
 
   size_t index = SizeMap::Index(objSize);

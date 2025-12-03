@@ -43,7 +43,8 @@ void* ThreadCache::FetchFromCentralCache(FreeList& list, size_t objSize) {
 
   void* start = nullptr;
   void* end = nullptr;
-  size_t actualNum = CentralCache::Instance().RemoveRange(start, end, batchNum, objSize);
+  size_t actualNum =
+      CentralCache::Instance().RemoveRange(start, end, batchNum, objSize);
   list.PushRange(start, end, actualNum);
 
   return list.Pop();

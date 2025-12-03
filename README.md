@@ -58,7 +58,7 @@ LiquidMem 是一个高性能的多线程内存池实现，旨在替代标准的 
 LiquidMem/
 ├── include/                 # 头文件目录
 │   ├── Common.h            # 公共定义和工具类
-│   ├── ConcurAlloc.h       # 对外接口声明
+│   ├── Lqmalloc.h          # 对外接口声明
 │   ├── ThreadCache.h       # 线程缓存类
 │   ├── CentralCache.h      # 中心缓存类
 │   ├── PageHeap.h          # 页堆类
@@ -66,7 +66,7 @@ LiquidMem/
 │   └── PageMap.hpp         # 基数树页映射
 ├── src/                    # 源文件目录
 │   ├── Common.cpp          # 公共功能实现
-│   ├── ConcurAlloc.cpp     # 主要接口实现
+│   ├── Lqmalloc.cpp        # 主要接口实现
 │   ├── ThreadCache.cpp     # 线程缓存实现
 │   ├── CentralCache.cpp    # 中心缓存实现
 │   └── PageHeap.cpp        # 页堆实现
@@ -91,7 +91,7 @@ LiquidMem/
 ```bash
 # 克隆项目
 git clone https://github.com/huzch/LiquidMem.git
-cd ConcurMemPool
+cd LiquidMem
 
 # 编译项目
 make
@@ -106,19 +106,19 @@ make clean
 ### 使用示例
 
 ```cpp
-#include "ConcurAlloc.h"
+#include "Lqmalloc.h"
 
 int main() {
     // 分配内存
-    void* ptr1 = ConcurAlloc(64);    // 分配 64 字节
-    void* ptr2 = ConcurAlloc(1024);  // 分配 1024 字节
+    void* ptr1 = lqmalloc(64);    // 分配 64 字节
+    void* ptr2 = lqmalloc(1024);  // 分配 1024 字节
     
     // 使用内存
     // ...
     
     // 释放内存
-    ConcurFree(ptr1);
-    ConcurFree(ptr2);
+    lqfree(ptr1);
+    lqfree(ptr2);
     
     return 0;
 }
@@ -127,15 +127,15 @@ int main() {
 ### 多线程使用
 
 ```cpp
-#include "ConcurAlloc.h"
+#include "Lqmalloc.h"
 #include <thread>
 #include <vector>
 
 void worker_thread() {
     for (int i = 0; i < 10000; ++i) {
-        void* ptr = ConcurAlloc(rand() % 1024 + 1);
+        void* ptr = lqmalloc(rand() % 1024 + 1);
         // 使用内存...
-        ConcurFree(ptr);
+        lqfree(ptr);
     }
 }
 
@@ -165,16 +165,16 @@ make run
 ```
 
 典型测试结果：
-```
+```bash
 ==========================================================
-4个线程并发执行10轮次，每轮次malloc 10000次: 花费：XXX ms
-4个线程并发执行10轮次，每轮次free 10000次: 花费：XXX ms
-4个线程并发malloc&free 400000次，总计花费：XXX ms
+64个线程并发执行100轮次，每轮次malloc 10000次: 花费：164550 ms
+64个线程并发执行100轮次，每轮次free 10000次: 花费：18795 ms
+64个线程并发malloc&free 64000000次，总计花费：183345 ms
 
 
-4个线程并发执行10轮次，每轮次ConcurAlloc 10000次: 花费：XXX ms
-4个线程并发执行10轮次，每轮次ConcurFree 10000次: 花费：XXX ms
-4个线程并发ConcurAlloc&ConcurFree 400000次，总计花费：XXX ms
+64个线程并发执行100轮次，每轮次lqmalloc 10000次: 花费：18406 ms
+64个线程并发执行100轮次，每轮次lqfree 10000次: 花费：19038 ms
+64个线程并发lqmalloc&lqfree 64000000次，总计花费：37444 ms
 ==========================================================
 ```
 

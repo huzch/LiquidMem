@@ -1,10 +1,10 @@
-#include "ConcurAlloc.h"
+#include "Lqmalloc.h"
 #include "ObjectPool.hpp"
 
 struct TreeNode {
   int _val;
-  TreeNode *_left;
-  TreeNode *_right;
+  TreeNode* _left;
+  TreeNode* _right;
   TreeNode() : _val(0), _left(nullptr), _right(nullptr) {}
 };
 
@@ -12,7 +12,7 @@ void TestObjectPool() {
   const size_t Rounds = 3;  // 申请轮次
   const size_t N = 100000;  // 每轮申请次数
 
-  std::vector<TreeNode *> v1;
+  std::vector<TreeNode*> v1;
   v1.reserve(N);
 
   size_t begin1 = clock();
@@ -28,7 +28,7 @@ void TestObjectPool() {
   size_t end1 = clock();
 
   ObjectPool<TreeNode> TNPool;
-  std::vector<TreeNode *> v2;
+  std::vector<TreeNode*> v2;
   v2.reserve(N);
 
   size_t begin2 = clock();
@@ -47,16 +47,16 @@ void TestObjectPool() {
   cout << "object pool cost time:" << end2 - begin2 << endl;
 }
 
-void TestConcurAlloc1() {
+void Testlqmalloc1() {
   std::thread t1([]() {
     for (size_t i = 0; i < 5; ++i) {
-      ConcurAlloc(6);
+      lqmalloc(6);
     }
   });
 
   std::thread t2([]() {
     for (size_t i = 0; i < 5; ++i) {
-      ConcurAlloc(7);
+      lqmalloc(7);
     }
   });
 
@@ -64,20 +64,20 @@ void TestConcurAlloc1() {
   t2.join();
 }
 
-void TestConcurAlloc2() {
-  void *p1 = ConcurAlloc(6);
-  void *p2 = ConcurAlloc(7);
-  void *p3 = ConcurAlloc(1);
-  void *p4 = ConcurAlloc(3);
+void Testlqmalloc2() {
+  void* p1 = lqmalloc(6);
+  void* p2 = lqmalloc(7);
+  void* p3 = lqmalloc(1);
+  void* p4 = lqmalloc(3);
 
-  ConcurFree(p1);
-  ConcurFree(p2);
-  ConcurFree(p3);
-  ConcurFree(p4);
+  lqfree(p1);
+  lqfree(p2);
+  lqfree(p3);
+  lqfree(p4);
 }
 
 // int main() {
 //   // TestObjectPool();
-//   TestConcurAlloc1();
+//   Testlqmalloc1();
 //   return 0;
 // }

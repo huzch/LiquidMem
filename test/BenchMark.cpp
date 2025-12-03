@@ -1,6 +1,6 @@
 #include <chrono>
 
-#include "ConcurAlloc.h"
+#include "Lqmalloc.h"
 
 // ntimes 一轮申请和释放内存的次数
 // nworks 线程数
@@ -61,7 +61,7 @@ void BenchmarkMalloc(size_t ntimes, size_t nworks, size_t rounds) {
          malloc_costtime.load() + free_costtime.load());
 }
 
-void BenchmarkConcurAlloc(size_t ntimes, size_t nworks, size_t rounds) {
+void Benchmarklqmalloc(size_t ntimes, size_t nworks, size_t rounds) {
   std::vector<std::thread> vthread(nworks);
   std::atomic<size_t> malloc_costtime(0);
   std::atomic<size_t> free_costtime(0);
@@ -75,8 +75,8 @@ void BenchmarkConcurAlloc(size_t ntimes, size_t nworks, size_t rounds) {
         // size_t begin1 = clock();
         auto begin1 = std::chrono::high_resolution_clock::now();
         for (size_t i = 0; i < ntimes; i++) {
-          // v.push_back(ConcurAlloc(16));
-          v.push_back(ConcurAlloc((16 + i) % 8192 + 1));
+          // v.push_back(lqmalloc(16));
+          v.push_back(lqmalloc((16 + i) % 8192 + 1));
         }
         // size_t end1 = clock();
         auto end1 = std::chrono::high_resolution_clock::now();
@@ -84,7 +84,7 @@ void BenchmarkConcurAlloc(size_t ntimes, size_t nworks, size_t rounds) {
         // size_t begin2 = clock();
         auto begin2 = std::chrono::high_resolution_clock::now();
         for (size_t i = 0; i < ntimes; i++) {
-          ConcurFree(v[i]);
+          lqfree(v[i]);
         }
         // size_t end2 = clock();
         auto end2 = std::chrono::high_resolution_clock::now();
@@ -106,14 +106,14 @@ void BenchmarkConcurAlloc(size_t ntimes, size_t nworks, size_t rounds) {
     t.join();
   }
 
-  printf("%zu个线程并发执行%zu轮次，每轮次ConcurAlloc %zu次: 花费：%zu ms\n",
+  printf("%zu个线程并发执行%zu轮次，每轮次lqmalloc %zu次: 花费：%zu ms\n",
          nworks, rounds, ntimes, malloc_costtime.load());
 
-  printf("%zu个线程并发执行%zu轮次，每轮次ConcurFree %zu次: 花费：%zu ms\n",
-         nworks, rounds, ntimes, free_costtime.load());
+  printf("%zu个线程并发执行%zu轮次，每轮次lqfree %zu次: 花费：%zu ms\n", nworks,
+         rounds, ntimes, free_costtime.load());
 
-  printf("%zu个线程并发ConcurAlloc&ConcurFree %zu次，总计花费：%zu ms\n",
-         nworks, nworks * rounds * ntimes,
+  printf("%zu个线程并发lqmalloc&lqfree %zu次，总计花费：%zu ms\n", nworks,
+         nworks * rounds * ntimes,
          malloc_costtime.load() + free_costtime.load());
 }
 
@@ -124,7 +124,7 @@ int main() {
 
   cout << endl << endl;
 
-  BenchmarkConcurAlloc(n, 64, 100);
+  Benchmarklqmalloc(n, 64, 100);
   cout << "==========================================================" << endl;
 
   return 0;

@@ -1,7 +1,7 @@
-#include "ConcurAlloc.h"
+#include "Lqmalloc.h"
 
 // 对外申请内存接口（代替malloc）
-void* ConcurAlloc(size_t bytes) {
+void* lqmalloc(size_t bytes) {
   // 小于256KB内存，缓存架构申请
   if (bytes <= MAX_BYTES) {
     if (pThreadCache == nullptr) {
@@ -25,7 +25,7 @@ void* ConcurAlloc(size_t bytes) {
 }
 
 // 对外释放内存接口（代替free）
-void ConcurFree(void* ptr) {
+void lqfree(void* ptr) {
   assert(ptr);
 
   Span* span = PageHeap::Instance().ObjectToSpan(ptr);
